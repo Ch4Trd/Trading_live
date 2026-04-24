@@ -1,0 +1,24 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Runtime state (données locales, ne pas versionner)
+*_seen.json
+*_subscribers.json
+languages.json
+timezones.json
+context_memory.json
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
