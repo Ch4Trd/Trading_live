@@ -1443,7 +1443,7 @@ async def cmd_unknown(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── post-init ─────────────────────────────────────────────────────────────────
 
 async def post_init(app: Application) -> None:
-    await app.bot.set_my_commands([
+    _user_commands = [
         BotCommand("price",       "Real-time prices / Prix temps réel"),
         BotCommand("correlation", "Correlations / Corrélations"),
         BotCommand("day",         "Today's events (High+Medium) / Calendrier du jour"),
@@ -1452,7 +1452,7 @@ async def post_init(app: Application) -> None:
         BotCommand("flashnews",   "Flash news by impact — ex: /flashnews 6"),
         BotCommand("newreport",   "US news report"),
         BotCommand("us",          "Latest US news"),
-        BotCommand("structure",    "Market structure: HH/HL/BOS/CHoCH"),
+        BotCommand("structure",   "Market structure: HH/HL/BOS/CHoCH"),
         BotCommand("divergence",  "RSI divergences — bullish/bearish regular & hidden"),
         BotCommand("confluence",  "Confluence score 0-10 — évite les faux signaux"),
         BotCommand("risk_calc",   "Risk calculator — /risk-calc 10000 1 1.085 1.080 1.095"),
@@ -1470,18 +1470,20 @@ async def post_init(app: Application) -> None:
         BotCommand("uptime",      "Uptime"),
         BotCommand("help",        "Help / Aide"),
         BotCommand("start",       "Start"),
-    ])
-    # Admin commands visible uniquement pour toi dans le menu Telegram
+    ]
+    await app.bot.set_my_commands(_user_commands)
+    # Pour toi (admin) : toutes les commandes normales + les commandes admin
     from admin_commands import ADMIN_USER_ID
+    _admin_extra = [
+        BotCommand("admin_add_user",   "Ajouter un user payant — /admin_add_user <id> <name> [days]"),
+        BotCommand("admin_remove_user","Révoquer l'accès — /admin_remove_user <id>"),
+        BotCommand("admin_list_users", "Voir tous les users et statuts"),
+        BotCommand("admin_status",     "Statut d'un user — /admin_status <id>"),
+        BotCommand("admin_renew",      "Renouveler l'abonnement — /admin_renew <id> [days]"),
+    ]
     try:
         await app.bot.set_my_commands(
-            [
-                BotCommand("admin_add_user",   "Ajouter un user payant — /admin_add_user <id> <name> [days]"),
-                BotCommand("admin_remove_user","Révoquer l'accès — /admin_remove_user <id>"),
-                BotCommand("admin_list_users", "Voir tous les users et statuts"),
-                BotCommand("admin_status",     "Statut d'un user — /admin_status <id>"),
-                BotCommand("admin_renew",      "Renouveler l'abonnement — /admin_renew <id> [days]"),
-            ],
+            _user_commands + _admin_extra,
             scope=BotCommandScopeChat(chat_id=ADMIN_USER_ID),
         )
     except Exception as exc:
