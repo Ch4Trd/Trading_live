@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from telegram import Update, BotCommand, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.constants import BotCommandScopeType
+from telegram import BotCommandScopeChat
 from telegram.ext import (
     Application, CommandHandler, CallbackQueryHandler,
     ContextTypes, MessageHandler, filters,
@@ -1469,6 +1471,21 @@ async def post_init(app: Application) -> None:
         BotCommand("help",        "Help / Aide"),
         BotCommand("start",       "Start"),
     ])
+    # Admin commands visible uniquement pour toi dans le menu Telegram
+    from admin_commands import ADMIN_USER_ID
+    try:
+        await app.bot.set_my_commands(
+            [
+                BotCommand("admin_add_user",   "Ajouter un user payant — /admin_add_user <id> <name> [days]"),
+                BotCommand("admin_remove_user","Révoquer l'accès — /admin_remove_user <id>"),
+                BotCommand("admin_list_users", "Voir tous les users et statuts"),
+                BotCommand("admin_status",     "Statut d'un user — /admin_status <id>"),
+                BotCommand("admin_renew",      "Renouveler l'abonnement — /admin_renew <id> [days]"),
+            ],
+            scope=BotCommandScopeChat(chat_id=ADMIN_USER_ID),
+        )
+    except Exception as exc:
+        log.warning("Impossible de définir les commandes admin: %s", exc)
     for chat_id_str, hours in subscribers.items():
         app.job_queue.run_repeating(
             _alert_job, interval=hours * 3600, first=60,
@@ -1537,19 +1554,17 @@ def run_bot() -> None:
     app.add_handler(CommandHandler("breaking",    cmd_breaking))
     app.add_handler(CommandHandler("trump",       cmd_trump))
     app.add_handler(CommandHandler("alert",       cmd_alert))
-    app.add_handler(CommandHandler("session",     cmd_session))
-    app.add_handler(CommandHandler("ping",        cmd_ping))
-    app.add_handler(CommandHandler("uptime",      cmd_uptime))
+    app.add_handler(CommandHandler("session",          cmd_session))
+    app.add_handler(CommandHandler("ping",             cmd_ping))
+    app.add_handler(CommandHandler("uptime",           cmd_uptime))
+    # Admin commands must be before the catch-all MessageHandler
+    app.add_handler(CommandHandler("admin_add_user",   admin_add_user))
+    app.add_handler(CommandHandler("admin_remove_user",admin_remove_user))
+    app.add_handler(CommandHandler("admin_list_users", admin_list_users))
+    app.add_handler(CommandHandler("admin_status",     admin_user_status))
+    app.add_handler(CommandHandler("admin_renew",      admin_renew_user))
     app.add_handler(CallbackQueryHandler(_button_callback))
     app.add_handler(MessageHandler(filters.COMMAND, cmd_unknown))
 
     log.info("tradingLIVE démarré.")
-    # Admin commands
-    app.add_handler(CommandHandler("admin_add_user", admin_add_user))
-    app.add_handler(CommandHandler("admin_remove_user", admin_remove_user))
-    app.add_handler(CommandHandler("admin_list_users", admin_list_users))
-    app.add_handler(CommandHandler("admin_status", admin_user_status))
-    app.add_handler(CommandHandler("admin_renew", admin_renew_user))
-
-
     app.run_polling(allowed_updates=Update.ALL_TYPES)
