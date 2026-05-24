@@ -16,6 +16,12 @@ languages.json
 timezones.json
 context_memory.json
 
+# Database (données locales, ne pas versionner)
+*.db
+
+# Backups
+*.backup
+
 # Logs
 *.log
 

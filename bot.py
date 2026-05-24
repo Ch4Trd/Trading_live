@@ -24,6 +24,14 @@ from config import (
     TELEGRAM_TOKEN,
     MAX_ARTICLES_REPORT, MAX_ALERT_ARTICLES, ALERT_INTERVAL_HOURS,
 )
+from subscription import subscription_manager
+from admin_commands import (
+    admin_add_user,
+    admin_remove_user,
+    admin_list_users,
+    admin_user_status,
+    admin_renew_user,
+)
 
 log        = logging.getLogger(__name__)
 START_TIME = datetime.now(timezone.utc)
@@ -357,6 +365,11 @@ async def _breaking_job(context: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /start ────────────────────────────────────────────────────────────────────
 
 async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     await update.message.reply_text(t("start", lang), parse_mode=ParseMode.HTML)
 
@@ -364,6 +377,11 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /help ─────────────────────────────────────────────────────────────────────
 
 async def cmd_help(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     await update.message.reply_text(t("help", lang), **SEND_KW)
 
@@ -371,6 +389,11 @@ async def cmd_help(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /lang ─────────────────────────────────────────────────────────────────────
 
 async def cmd_lang(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     chat_id = str(update.effective_chat.id)
     lang    = get_lang(chat_id)
     if not ctx.args:
@@ -388,6 +411,11 @@ async def cmd_lang(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /price ────────────────────────────────────────────────────────────────────
 
 async def cmd_price(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     await _typing(update)
     msg  = await _loading_msg(update, t("loading_price", lang))
@@ -399,6 +427,11 @@ async def cmd_price(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /correlation ──────────────────────────────────────────────────────────────
 
 async def cmd_correlation(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     await _typing(update)
     msg  = await _loading_msg(update, t("loading_correlation", lang))
@@ -435,6 +468,11 @@ DAY_EMPTY = {
 
 
 async def cmd_day(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     await _typing(update)
     msg    = await _loading_msg(update, t("loading_day", lang))
@@ -457,6 +495,11 @@ async def cmd_day(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /week ─────────────────────────────────────────────────────────────────────
 
 async def cmd_week(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     await _typing(update)
     msg    = await _loading_msg(update, t("loading_calendar", lang))
@@ -468,6 +511,11 @@ async def cmd_week(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /deep ─────────────────────────────────────────────────────────────────────
 
 async def cmd_deep(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from ai_analyst import deep_market_analysis
     from html import escape
     lang = get_lang(str(update.effective_chat.id))
@@ -548,6 +596,11 @@ async def cmd_deep(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /flashnews ────────────────────────────────────────────────────────────────
 
 async def cmd_flashnews(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     await _typing(update)
     try:
@@ -596,6 +649,11 @@ async def cmd_flashnews(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /newreport ────────────────────────────────────────────────────────────────
 
 async def cmd_newreport(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from ai_analyst import translate_articles
     lang     = get_lang(str(update.effective_chat.id))
     await _typing(update)
@@ -610,6 +668,11 @@ async def cmd_newreport(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /us ───────────────────────────────────────────────────────────────────────
 
 async def cmd_us(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from ai_analyst import translate_articles
     lang     = get_lang(str(update.effective_chat.id))
     await _typing(update)
@@ -624,6 +687,11 @@ async def cmd_us(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /alert ────────────────────────────────────────────────────────────────────
 
 async def cmd_alert(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     chat_id = str(update.effective_chat.id)
     lang    = get_lang(chat_id)
     args    = ctx.args
@@ -683,6 +751,11 @@ TRUMP_TEXTS = {
 
 
 async def cmd_trump(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     chat_id = str(update.effective_chat.id)
     lang    = get_lang(chat_id)
     args    = ctx.args
@@ -731,6 +804,11 @@ TZ_TEXTS = {
 
 
 async def cmd_tz(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
     from datetime import datetime, timezone as _tz
 
@@ -809,6 +887,11 @@ MARKET_TEXTS = {
 
 
 async def cmd_market(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     chat_id = str(update.effective_chat.id)
     lang    = get_lang(chat_id)
     args    = ctx.args
@@ -852,6 +935,11 @@ BREAKING_TEXTS = {
 
 
 async def cmd_breaking(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     chat_id = str(update.effective_chat.id)
     lang    = get_lang(chat_id)
     args    = ctx.args
@@ -876,6 +964,11 @@ async def cmd_breaking(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /structure ───────────────────────────────────────────────────────────────
 
 async def cmd_structure(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from technical_analysis import format_structure_message
     from formatter import _split_message
     lang = get_lang(str(update.effective_chat.id))
@@ -891,6 +984,11 @@ async def cmd_structure(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /divergence ───────────────────────────────────────────────────────────────
 
 async def cmd_divergence(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from technical_analysis import format_divergence_message
     from formatter import _split_message
     lang = get_lang(str(update.effective_chat.id))
@@ -906,6 +1004,11 @@ async def cmd_divergence(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None
 # ── /confluence ───────────────────────────────────────────────────────────────
 
 async def cmd_confluence(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from technical_analysis import format_confluence_message
     from formatter import _split_message
     lang = get_lang(str(update.effective_chat.id))
@@ -946,6 +1049,11 @@ _RISK_USAGE = {
 
 
 async def cmd_risk_calc(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from html import escape as _esc_html
     lang = get_lang(str(update.effective_chat.id))
 
@@ -1032,6 +1140,11 @@ async def cmd_risk_calc(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /vix ──────────────────────────────────────────────────────────────────────
 
 async def cmd_vix(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from macro_data import fetch_vix, format_vix_message
     lang = get_lang(str(update.effective_chat.id))
     await _typing(update)
@@ -1045,6 +1158,11 @@ async def cmd_vix(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /yield-curve ──────────────────────────────────────────────────────────────
 
 async def cmd_yield_curve(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from macro_data import fetch_yield_curve, format_yield_curve_message
     from formatter import _split_message
     lang = get_lang(str(update.effective_chat.id))
@@ -1079,6 +1197,11 @@ ASK_TEXTS = {
 
 
 async def cmd_ask(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     from ai_analyst import ask_ai
     from html import escape as _esc_html
     lang = get_lang(str(update.effective_chat.id))
@@ -1177,6 +1300,11 @@ def _is_session_open(open_h: int, close_h: int, hour: int) -> bool:
 
 
 async def cmd_session(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang    = get_lang(str(update.effective_chat.id))
     now_utc = datetime.now(timezone.utc)
     hour    = now_utc.hour
@@ -1269,6 +1397,11 @@ async def cmd_session(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /ping ─────────────────────────────────────────────────────────────────────
 
 async def cmd_ping(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     t0   = time.monotonic()
     msg  = await update.message.reply_text(t("ping_wait", lang), parse_mode=ParseMode.HTML)
@@ -1279,6 +1412,11 @@ async def cmd_ping(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── /uptime ───────────────────────────────────────────────────────────────────
 
 async def cmd_uptime(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang  = get_lang(str(update.effective_chat.id))
     diff  = datetime.now(timezone.utc) - START_TIME
     total = int(diff.total_seconds())
@@ -1291,6 +1429,11 @@ async def cmd_uptime(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 # ── unknown ───────────────────────────────────────────────────────────────────
 
 async def cmd_unknown(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    if not subscription_manager.is_user_active(user_id):
+        await update.message.reply_text("❌ **Subscription requise**", parse_mode="Markdown")
+        return
+    
     lang = get_lang(str(update.effective_chat.id))
     await update.message.reply_text(t("unknown_cmd", lang), parse_mode=ParseMode.HTML)
 
@@ -1401,4 +1544,12 @@ def run_bot() -> None:
     app.add_handler(MessageHandler(filters.COMMAND, cmd_unknown))
 
     log.info("tradingLIVE démarré.")
+    # Admin commands
+    app.add_handler(CommandHandler("admin_add_user", admin_add_user))
+    app.add_handler(CommandHandler("admin_remove_user", admin_remove_user))
+    app.add_handler(CommandHandler("admin_list_users", admin_list_users))
+    app.add_handler(CommandHandler("admin_status", admin_user_status))
+    app.add_handler(CommandHandler("admin_renew", admin_renew_user))
+
+
     app.run_polling(allowed_updates=Update.ALL_TYPES)
