@@ -36,6 +36,7 @@ from admin_commands import (
 )
 from analyze_command import cmd_analyze
 from macro_engine import macro_engine
+from dxy_orderflow import cmd_dxy_orderflow
 
 log        = logging.getLogger(__name__)
 START_TIME = datetime.now(timezone.utc)
@@ -1454,7 +1455,8 @@ async def post_init(app: Application) -> None:
         BotCommand("flashnews",   "Flash news by impact — ex: /flashnews 6"),
         BotCommand("newreport",   "US news report"),
         BotCommand("us",          "Latest US news"),
-        BotCommand("analyze",     "Confluence FVG+BSL/SSL+macro — /analyze NQ | GOLD | EURUSD"),
+        BotCommand("analyze",        "Confluence FVG+BSL/SSL+macro — /analyze NQ | GOLD | EURUSD"),
+        BotCommand("dxy_orderflow",  "DXY Orderflow SMC/ICT H4+M15 — BOS / FVG / PDH-PDL"),
         BotCommand("structure",   "Market structure: HH/HL/BOS/CHoCH"),
         BotCommand("divergence",  "RSI divergences — bullish/bearish regular & hidden"),
         BotCommand("confluence",  "Confluence score 0-10 — évite les faux signaux"),
@@ -1550,7 +1552,9 @@ def run_bot() -> None:
     app.add_handler(CommandHandler("flashnews",   cmd_flashnews))
     app.add_handler(CommandHandler("newreport",   cmd_newreport))
     app.add_handler(CommandHandler("us",          cmd_us))
-    app.add_handler(CommandHandler("analyze",     cmd_analyze))
+    app.add_handler(CommandHandler("analyze",        cmd_analyze))
+    app.add_handler(CommandHandler("dxy_orderflow",  cmd_dxy_orderflow))
+    app.add_handler(CommandHandler("dxy",            cmd_dxy_orderflow))
     app.add_handler(CommandHandler("structure",    cmd_structure))
     app.add_handler(CommandHandler("divergence",  cmd_divergence))
     app.add_handler(CommandHandler("confluence",  cmd_confluence))
