@@ -34,6 +34,8 @@ from admin_commands import (
     admin_user_status,
     admin_renew_user,
 )
+from analyze_command import cmd_analyze
+from macro_engine import macro_engine
 
 log        = logging.getLogger(__name__)
 START_TIME = datetime.now(timezone.utc)
@@ -1452,6 +1454,7 @@ async def post_init(app: Application) -> None:
         BotCommand("flashnews",   "Flash news by impact — ex: /flashnews 6"),
         BotCommand("newreport",   "US news report"),
         BotCommand("us",          "Latest US news"),
+        BotCommand("analyze",     "Confluence FVG+BSL/SSL+macro — /analyze NQ | GOLD | EURUSD"),
         BotCommand("structure",   "Market structure: HH/HL/BOS/CHoCH"),
         BotCommand("divergence",  "RSI divergences — bullish/bearish regular & hidden"),
         BotCommand("confluence",  "Confluence score 0-10 — évite les faux signaux"),
@@ -1502,8 +1505,13 @@ async def post_init(app: Application) -> None:
     app.job_queue.run_repeating(
         _market_news_job, interval=MARKET_POLL_INTERVAL, first=20, name="market_monitor",
     )
+    # ── MacroEngine : tâche asyncio non-bloquante ─────────────────────────────
+    import asyncio as _asyncio
+    _asyncio.create_task(
+        macro_engine.run(app.bot, breaking_subscribers, market_subscribers)
+    )
     log.info(
-        "Bot prêt. alerts:%d | trump:%d | breaking:%d | market:%d",
+        "Bot prêt. alerts:%d | trump:%d | breaking:%d | market:%d | macro_engine:ON",
         len(subscribers), len(trump_subscribers), len(breaking_subscribers), len(market_subscribers),
     )
 
@@ -1542,6 +1550,7 @@ def run_bot() -> None:
     app.add_handler(CommandHandler("flashnews",   cmd_flashnews))
     app.add_handler(CommandHandler("newreport",   cmd_newreport))
     app.add_handler(CommandHandler("us",          cmd_us))
+    app.add_handler(CommandHandler("analyze",     cmd_analyze))
     app.add_handler(CommandHandler("structure",    cmd_structure))
     app.add_handler(CommandHandler("divergence",  cmd_divergence))
     app.add_handler(CommandHandler("confluence",  cmd_confluence))
