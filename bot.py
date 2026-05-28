@@ -39,6 +39,7 @@ from macro_engine import macro_engine
 from dxy_orderflow import cmd_dxy_orderflow
 from silver_bullet import cmd_silver_bullet
 from purge_scan import cmd_purge_scan
+from learn_command import cmd_learn
 
 log        = logging.getLogger(__name__)
 START_TIME = datetime.now(timezone.utc)
@@ -1461,6 +1462,7 @@ async def post_init(app: Application) -> None:
         BotCommand("dxy_orderflow",  "DXY Orderflow SMC/ICT H4+M15 — BOS / FVG / PDH-PDL"),
         BotCommand("silver_bullet",  "ICT Silver Bullet — Sweep+MSS+FVG — /silver_bullet NQ"),
         BotCommand("purge_scan",     "ICT Liquidity Purge — Asian/Prev session — /purge_scan GOLD"),
+        BotCommand("learn",          "Leçon analyse fondamentale — /learn | /learn reset"),
         BotCommand("structure",   "Market structure: HH/HL/BOS/CHoCH"),
         BotCommand("divergence",  "RSI divergences — bullish/bearish regular & hidden"),
         BotCommand("confluence",  "Confluence score 0-10 — évite les faux signaux"),
@@ -1563,6 +1565,7 @@ def run_bot() -> None:
     app.add_handler(CommandHandler("sb",             cmd_silver_bullet))
     app.add_handler(CommandHandler("purge_scan",     cmd_purge_scan))
     app.add_handler(CommandHandler("purge",          cmd_purge_scan))
+    app.add_handler(CommandHandler("learn",          cmd_learn))
     app.add_handler(CommandHandler("structure",    cmd_structure))
     app.add_handler(CommandHandler("divergence",  cmd_divergence))
     app.add_handler(CommandHandler("confluence",  cmd_confluence))
