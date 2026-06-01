@@ -18,35 +18,23 @@ US_FEEDS = {
 }
 
 ASSETS = {
-    "EUR/USD": "EURUSD=X",
-    "USD/CAD": "USDCAD=X",
-    "GBP/USD": "GBPUSD=X",
-    "USD/JPY": "USDJPY=X",
-    "XAU/USD": "GC=F",
     "NAS100":  "^NDX",
     "US500":   "^GSPC",
+    "XAU/USD": "GC=F",
     "NVDA":    "NVDA",
 }
 
 ASSET_EMOJI = {
-    "EUR/USD": "🇪🇺",
-    "USD/CAD": "🇨🇦",
-    "GBP/USD": "🇬🇧",
-    "USD/JPY": "🇯🇵",
-    "XAU/USD": "🥇",
     "NAS100":  "📈",
     "US500":   "📊",
+    "XAU/USD": "🥇",
     "NVDA":    "🖥️",
 }
 
 ASSET_TYPE = {
-    "EUR/USD": "forex",
-    "USD/CAD": "forex",
-    "GBP/USD": "forex",
-    "USD/JPY": "forex",
-    "XAU/USD": "commodity",
     "NAS100":  "index",
     "US500":   "index",
+    "XAU/USD": "commodity",
     "NVDA":    "stock",
 }
 

@@ -120,7 +120,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "fr": (
             "📊 <b>tradingLIVE – Aide complète</b>\n═══════════════════════════════\n\n"
             "<b>📈 Marché</b>\n"
-            "🔹 /price            – Prix temps réel (NAS100/US500/GBP/CAD/EUR)\n"
+            "🔹 /price            – Prix temps réel (NAS100/US500/GOLD/NVDA)\n"
             "🔹 /correlation      – Corrélations inter-marchés 30j\n"
             "🔹 /day              – Calendrier du jour (High+Medium)\n"
             "🔹 /result           – Résultats économiques du jour (Actual vs Forecast)\n"
@@ -162,7 +162,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "en": (
             "📊 <b>tradingLIVE – Full Help</b>\n═══════════════════════════════\n\n"
             "<b>📈 Market</b>\n"
-            "🔹 /price            – Real-time prices (NAS100/US500/GBP/CAD/EUR)\n"
+            "🔹 /price            – Real-time prices (NAS100/US500/GOLD/NVDA)\n"
             "🔹 /correlation      – 30-day cross-market correlations\n"
             "🔹 /day              – Today's calendar (High+Medium)\n"
             "🔹 /result           – Today's economic results (Actual vs Forecast)\n"
@@ -204,7 +204,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "es": (
             "📊 <b>tradingLIVE – Ayuda completa</b>\n═══════════════════════════════\n\n"
             "<b>📈 Mercado</b>\n"
-            "🔹 /price            – Precios en tiempo real (NAS100/US500/GBP/CAD/EUR)\n"
+            "🔹 /price            – Precios en tiempo real (NAS100/US500/GOLD/NVDA)\n"
             "🔹 /correlation      – Correlaciones entre mercados (30 días)\n"
             "🔹 /day              – Calendario del día (High+Medium)\n"
             "🔹 /result           – Resultados económicos del día (Actual vs Previsión)\n"
@@ -246,7 +246,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "ar": (
             "📊 <b>tradingLIVE – المساعدة الكاملة</b>\n═══════════════════════════════\n\n"
             "<b>📈 السوق</b>\n"
-            "🔹 /price            – أسعار الوقت الفعلي (NAS100/US500/GBP/CAD/EUR)\n"
+            "🔹 /price            – أسعار الوقت الفعلي (NAS100/US500/GOLD/NVDA)\n"
             "🔹 /correlation      – الارتباطات بين الأسواق (30 يوم)\n"
             "🔹 /day              – تقويم اليوم (عالي+متوسط)\n"
             "🔹 /result           – نتائج اليوم الاقتصادية (الفعلي مقابل التوقع)\n"

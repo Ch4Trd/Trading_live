@@ -121,8 +121,8 @@ def deep_market_analysis(
         "---",
         "Fournis une analyse complète en 6 sections :",
         "1. MACRO OVERVIEW — Contexte global, risk-on vs risk-off, sentiment dominant",
-        "2. FOREX — Analyse USD, dynamiques EUR/USD GBP/USD USD/CAD USD/JPY",
-        "3. INDICES & ACTIONS — NAS100, US500, NVDA : momentum, divergences, catalysts",
+        "2. DXY & USD — Analyse de la force du dollar, impact sur NQ/ES/Gold",
+        "3. INDICES & ACTIONS — NAS100 (NQ), US500 (ES), NVDA : momentum, divergences, catalysts",
         "4. CORRÉLATIONS CLÉS — Relations inter-marchés détectées",
         "5. RISQUES & CATALYSTS — Événements macro à surveiller, zones de danger",
         "6. BIAIS DIRECTIONNEL — Pour chaque asset: Haussier / Baissier / Neutre + niveau clé",
@@ -369,7 +369,7 @@ def analyze_fomc_event(title: str, summary: str = "", lang: str = "fr") -> str |
         "   - Indices (NAS100/US500): haussier/baissier, niveau clé à surveiller\n"
         "   - Obligations (10Y yield): direction probable\n"
         "   - Or: impact attendu\n"
-        "   - Forex clés: EUR/USD, GBP/USD, USD/JPY — niveaux et biais\n"
+        "   - DXY: direction et impact sur NQ/ES/Gold\n"
         "   - Risque principal à surveiller cette semaine\n\n"
         "Be specific with levels when possible. Trading-oriented, not academic."
     )

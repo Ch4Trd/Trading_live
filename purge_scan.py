@@ -42,31 +42,21 @@ ASSET_ALIASES: dict[str, str] = {
     "NASDAQ": "NAS100", "NQ100": "NAS100",
     "ES": "US500", "SPX": "US500", "SP500": "US500", "US500": "US500",
     "S&P": "US500",
-    "EURUSD": "EUR/USD", "EU": "EUR/USD", "EUR": "EUR/USD", "EUR/USD": "EUR/USD",
-    "GBPUSD": "GBP/USD", "GU": "GBP/USD", "CABLE": "GBP/USD", "GBP": "GBP/USD",
-    "GBP/USD": "GBP/USD",
-    "USDJPY": "USD/JPY", "UJ": "USD/JPY", "JPY": "USD/JPY", "USD/JPY": "USD/JPY",
-    "USDCAD": "USD/CAD", "UC": "USD/CAD", "CAD": "USD/CAD", "USD/CAD": "USD/CAD",
     "GOLD": "XAU/USD", "GC": "XAU/USD", "XAUUSD": "XAU/USD",
     "XAU": "XAU/USD", "XAU/USD": "XAU/USD", "OR": "XAU/USD",
     "NVDA": "NVDA", "NVIDIA": "NVDA",
 }
 
 _YF: dict[str, str] = {
-    "EUR/USD": "EURUSD=X", "USD/CAD": "USDCAD=X",
-    "GBP/USD": "GBPUSD=X", "USD/JPY": "USDJPY=X",
-    "XAU/USD": "GC=F",
     "NAS100":  "^NDX",
     "US500":   "^GSPC",
+    "XAU/USD": "GC=F",
     "NVDA":    "NVDA",
 }
 
 _ASSET_EMOJI: dict[str, str] = {
-    "EUR/USD": "🇪🇺", "USD/CAD": "🇨🇦", "GBP/USD": "🇬🇧", "USD/JPY": "🇯🇵",
-    "XAU/USD": "🥇", "NAS100": "📈", "US500": "📊", "NVDA": "🖥️",
+    "NAS100": "📈", "US500": "📊", "XAU/USD": "🥇", "NVDA": "🖥️",
 }
-
-_IS_FOREX = {"EUR/USD", "GBP/USD", "USD/JPY", "USD/CAD"}
 
 
 # ── Fetch helpers ──────────────────────────────────────────────────────────────
@@ -215,17 +205,12 @@ def _detect_purge(df: pd.DataFrame, level_high: float, level_low: float,
 
 
 def _calc_target_distance(price: float, target: float, name: str) -> str:
-    """Calcule la distance en pips ou points vers le target."""
+    """Calcule la distance en points vers le target."""
     diff = abs(target - price)
-    if name in _IS_FOREX:
-        pips = diff * 10000
-        return f"{pips:.1f} pips"
     return f"{diff:.2f} pts"
 
 
 def _fmt_price(val: float, name: str) -> str:
-    if name in _IS_FOREX:
-        return f"{val:.5f}"
     if name == "XAU/USD":
         return f"{val:.2f}"
     return f"{val:.2f}"
@@ -341,8 +326,8 @@ async def cmd_purge_scan(update, context):
     if not args:
         await update.message.reply_text(
             "⚠️ Usage : <code>/purge_scan &lt;asset&gt;</code>\n"
-            "Exemples : <code>/purge_scan NQ</code> | <code>/purge_scan GOLD</code> | "
-            "<code>/purge_scan EU</code>",
+            "Exemples : <code>/purge_scan NQ</code> | <code>/purge_scan ES</code> | "
+            "<code>/purge_scan GOLD</code>",
             parse_mode="HTML",
         )
         return
@@ -352,7 +337,7 @@ async def cmd_purge_scan(update, context):
     if asset_name is None:
         await update.message.reply_text(
             f"❌ Asset inconnu : <code>{_esc(raw)}</code>\n"
-            "Assets disponibles : NQ, ES, EURUSD, GBPUSD, USDJPY, USDCAD, GOLD, NVDA",
+            "Assets disponibles : NQ, ES, GOLD, NVDA",
             parse_mode="HTML",
         )
         return

@@ -33,33 +33,22 @@ log = logging.getLogger(__name__)
 
 ASSET_ALIASES: dict[str, str] = {
     # Indices US
-    "NQ":      "NAS100",  "NAS":     "NAS100",  "NDX":    "NAS100",
-    "NAS100":  "NAS100",  "NASDAQ":  "NAS100",  "NQ100":  "NAS100",
-    "ES":      "US500",   "SPX":     "US500",   "SP500":  "US500",
-    "US500":   "US500",   "S&P":     "US500",   "SPY":    "US500",
-    # Forex
-    "EURUSD":  "EUR/USD", "EU":      "EUR/USD", "EUR":    "EUR/USD",
-    "GBPUSD":  "GBP/USD", "GU":      "GBP/USD", "CABLE":  "GBP/USD", "GBP":    "GBP/USD",
-    "USDJPY":  "USD/JPY", "UJ":      "USD/JPY", "JPY":    "USD/JPY",
-    "USDCAD":  "USD/CAD", "UC":      "USD/CAD", "CAD":    "USD/CAD",
-    "EUR/USD": "EUR/USD", "GBP/USD": "GBP/USD",
-    "USD/JPY": "USD/JPY", "USD/CAD": "USD/CAD",
-    # Commodités
+    "NQ":      "NAS100", "NAS":    "NAS100", "NDX":    "NAS100",
+    "NAS100":  "NAS100", "NASDAQ": "NAS100", "NQ100":  "NAS100",
+    "ES":      "US500",  "SPX":    "US500",  "SP500":  "US500",
+    "US500":   "US500",  "S&P":    "US500",
+    # Or / Commodité
     "GOLD":    "XAU/USD", "GC":      "XAU/USD", "XAUUSD": "XAU/USD",
-    "XAU":     "XAU/USD", "XAU/USD": "XAU/USD", "OR":      "XAU/USD",
+    "XAU":     "XAU/USD", "XAU/USD": "XAU/USD", "OR":     "XAU/USD",
     # Stocks
-    "NVDA":    "NVDA",    "NVIDIA":  "NVDA",
+    "NVDA":    "NVDA",   "NVIDIA": "NVDA",
 }
 
 # Correspondance nom interne → ticker yfinance
 _YF: dict[str, str] = {
-    "EUR/USD": "EURUSD=X",
-    "USD/CAD": "USDCAD=X",
-    "GBP/USD": "GBPUSD=X",
-    "USD/JPY": "USDJPY=X",
-    "XAU/USD": "GC=F",
     "NAS100":  "^NDX",
     "US500":   "^GSPC",
+    "XAU/USD": "GC=F",
     "NVDA":    "NVDA",
 }
 
@@ -67,10 +56,6 @@ _YF: dict[str, str] = {
 _DISPLAY: dict[str, str] = {
     "NAS100":  "NAS100 (NQ)",
     "US500":   "US500 (ES)",
-    "EUR/USD": "EUR/USD",
-    "GBP/USD": "GBP/USD",
-    "USD/JPY": "USD/JPY",
-    "USD/CAD": "USD/CAD",
     "XAU/USD": "XAU/USD (Gold)",
     "NVDA":    "NVDA",
 }
@@ -308,7 +293,7 @@ def _compute_bias(
         if asset_type == "index":
             if dove >= 2:  long_pts  += 1
             elif hawk >= 2: short_pts += 1
-        elif asset_type in ("forex", "commodity") and "USD" in name:
+        elif asset_type == "commodity" and "USD" in name:
             if hawk >= 2: long_pts  += 1
             elif dove >= 2: short_pts += 1
         elif name == "XAU/USD":  # or inverse USD
@@ -560,7 +545,6 @@ async def cmd_analyze(update, ctx) -> None:
             "Usage : <code>/analyze &lt;asset&gt;</code>\n\n"
             "<b>Assets disponibles :</b>\n"
             "• Indices  : <code>NQ</code>  <code>ES</code>\n"
-            "• Forex    : <code>EURUSD</code>  <code>GBPUSD</code>  <code>USDJPY</code>  <code>USDCAD</code>\n"
             "• Commodity: <code>GOLD</code>  <code>GC</code>\n"
             "• Stock    : <code>NVDA</code>",
             parse_mode="HTML",

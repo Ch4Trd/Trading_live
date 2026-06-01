@@ -107,7 +107,7 @@ def format_vix_message(data: dict) -> str:
         lines += [
             "• Réduire taille de position de 20-30%",
             "• Elargir les stops — volatilité accrue",
-            "• USD/JPY et or : volatilité amplifiée",
+            "• NQ/ES et or : volatilité amplifiée",
             "• Indices : biais prudent, préférer short terme",
         ]
     elif v < 30:

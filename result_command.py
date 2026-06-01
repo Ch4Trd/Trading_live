@@ -28,14 +28,7 @@ _BEARISH_KEYWORDS = {
 
 # ── Correspondance devise → assets affectés ───────────────────────────────────
 _CURRENCY_ASSETS = {
-    "USD": "USD → EUR/USD↓  GBP/USD↓  NAS100↑/↓  GOLD↓",
-    "EUR": "EUR → EUR/USD↑  EUR/JPY↑",
-    "GBP": "GBP → GBP/USD↑  EUR/GBP↓",
-    "CAD": "CAD → USD/CAD↓",
-    "JPY": "JPY → USD/JPY↓  EUR/JPY↓",
-    "AUD": "AUD → AUD/USD↑",
-    "NZD": "NZD → NZD/USD↑",
-    "CHF": "CHF → USD/CHF↓",
+    "USD": "USD → NAS100↑/↓  US500↑/↓  GOLD↓/↑",
 }
 
 _FLAG_MAP  = {"USD": "🇺🇸", "CAD": "🇨🇦", "EUR": "🇪🇺", "GBP": "🇬🇧",
@@ -171,34 +164,14 @@ def _market_impact(event: EconEvent, surprise: dict) -> str:
     if ccy == "USD":
         if bullish:
             impact_lines += [
-                "💹 USD ↑  →  EUR/USD ↓  GBP/USD ↓  USD/CAD ↑",
-                "         →  USD/JPY ↑  GOLD ↓  (potentiel)",
+                "💹 USD ↑  →  NAS100 ↓  US500 ↓  (taux élevés = multiples compressés)",
+                "         →  GOLD ↓  (potentiel)",
             ]
         else:
             impact_lines += [
-                "💹 USD ↓  →  EUR/USD ↑  GBP/USD ↑  USD/CAD ↓",
-                "         →  USD/JPY ↓  GOLD ↑  (potentiel)",
+                "💹 USD ↓  →  NAS100 ↑  US500 ↑  (liquidités libérées = relief rally)",
+                "         →  GOLD ↑  (potentiel)",
             ]
-    elif ccy == "EUR":
-        if bullish:
-            impact_lines.append("💹 EUR ↑  →  EUR/USD ↑  EUR/JPY ↑  EUR/GBP ↑")
-        else:
-            impact_lines.append("💹 EUR ↓  →  EUR/USD ↓  EUR/JPY ↓")
-    elif ccy == "GBP":
-        if bullish:
-            impact_lines.append("💹 GBP ↑  →  GBP/USD ↑  EUR/GBP ↓  GBP/JPY ↑")
-        else:
-            impact_lines.append("💹 GBP ↓  →  GBP/USD ↓  EUR/GBP ↑")
-    elif ccy == "CAD":
-        if bullish:
-            impact_lines.append("💹 CAD ↑  →  USD/CAD ↓  CAD/JPY ↑")
-        else:
-            impact_lines.append("💹 CAD ↓  →  USD/CAD ↑")
-    elif ccy == "JPY":
-        if bullish:
-            impact_lines.append("💹 JPY ↑  →  USD/JPY ↓  EUR/JPY ↓")
-        else:
-            impact_lines.append("💹 JPY ↓  →  USD/JPY ↑  EUR/JPY ↑")
 
     return "\n".join(impact_lines)
 

@@ -238,22 +238,19 @@ def _compute_bias(bos_h4: dict, bos_m15: dict) -> str:
     if h4 == "bullish" and m15 == "bullish":
         return (
             "⚠️ <b>DXY H4 BULLISH + M15 BULLISH — Signal fort</b>\n\n"
-            "📉 Biais fortement <b>BEARISH</b> sur les indices <b>(NQ / ES)</b>.\n"
-            "   Les acheteurs d'indices risquent de se retrouver piégés dans des <b>Bull Traps</b>.\n"
-            "   Privilégier les setups de vente sur rejets de résistance.\n\n"
-            "💵 <b>Forex :</b> USD offensif — <code>EUR/USD</code> & <code>GBP/USD</code> sous pression.\n"
-            "   Biais <b>BULLISH</b> sur <code>USD/JPY</code> et <code>USD/CAD</code>.\n"
-            "🥇 <b>Or :</b> Pression baissière — USD fort compresse <code>XAU/USD</code>."
+            "📉 Biais fortement <b>BEARISH</b> sur <b>NQ / ES</b>\n"
+            "   USD offensif → compression des multiples → Bull Traps probables.\n"
+            "   Privilégier les setups SHORT sur rejets de résistance / FVG bearish.\n\n"
+            "🥇 <b>Or :</b> USD fort → pression baissière sur XAU/USD"
         )
 
     if h4 == "bearish" and m15 == "bearish":
         return (
             "✅ <b>DXY H4 BEARISH + M15 BEARISH — Signal fort</b>\n\n"
-            "📈 Biais fortement <b>BULLISH</b> sur les indices <b>(NQ / ES)</b>.\n"
-            "   Setups d'achat sur pullbacks vers supports / FVG Bullish favorisés.\n\n"
-            "💵 <b>Forex :</b> USD en distribution — <code>EUR/USD</code> & <code>GBP/USD</code> bien orientés.\n"
-            "   Biais <b>BEARISH</b> sur <code>USD/JPY</code> et <code>USD/CAD</code>.\n"
-            "🥇 <b>Or :</b> USD faible → tailwind haussier sur <code>XAU/USD</code>."
+            "📈 Biais fortement <b>BULLISH</b> sur <b>NQ / ES</b>\n"
+            "   USD en distribution → liquidités libérées → multiples se détendent.\n"
+            "   Favoriser les setups LONG sur pullbacks vers supports / FVG bullish.\n\n"
+            "🥇 <b>Or :</b> USD faible → tailwind haussier sur XAU/USD"
         )
 
     # Divergence — setup en construction
@@ -261,20 +258,18 @@ def _compute_bias(bos_h4: dict, bos_m15: dict) -> str:
         return (
             "🔄 <b>Divergence : DXY H4 BULLISH / M15 BEARISH</b>\n\n"
             "Structure macro favorable au dollar mais DXY consolide intraday.\n"
-            "   → Le M15 est probablement en train de <b>former un retracement</b> "
-            "avant de reprendre la direction H4.\n\n"
-            "📉 Biais <b>BEARISH modéré</b> sur indices — attendre confirmation M15 bullish.\n"
-            "⏳ Stratégie : surveiller un BOS M15 haussier sur DXY pour valider le setup short indices."
+            "→ Probable retracement M15 avant reprise haussière H4.\n\n"
+            "📉 Biais <b>BEARISH modéré</b> sur NQ / ES — confirmation requise.\n"
+            "⏳ Attendre un BOS M15 haussier sur DXY pour valider le SHORT indices."
         )
 
     if h4 == "bearish" and m15 == "bullish":
         return (
             "🔄 <b>Divergence : DXY H4 BEARISH / M15 BULLISH</b>\n\n"
-            "Structure macro bearish sur le dollar mais DXY rebondit intraday.\n"
-            "   → Le M15 est probablement en train de <b>purger la liquidité haute</b> "
-            "avant de reprendre la distribution H4.\n\n"
-            "📈 Biais <b>BULLISH modéré</b> sur indices — attendre confirmation M15 bearish sur DXY.\n"
-            "⏳ Stratégie : surveiller un BOS M15 baissier sur DXY pour valider le setup long indices."
+            "Structure macro bearish mais DXY purge liquidité haute intraday.\n"
+            "→ Probable sweep BSL avant reprise de la distribution H4.\n\n"
+            "📈 Biais <b>BULLISH modéré</b> sur NQ / ES — confirmation requise.\n"
+            "⏳ Attendre un BOS M15 baissier sur DXY pour valider le LONG indices."
         )
 
     # Consolidation — pas de signal

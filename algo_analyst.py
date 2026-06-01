@@ -241,8 +241,8 @@ def build_deep_report(
 
     # ── 2. Asset-by-asset analysis
     GROUPS = {
-        "💱 FOREX":         ["EUR/USD", "USD/CAD", "GBP/USD", "USD/JPY"],
         "📈 INDICES":       ["NAS100", "US500"],
+        "🥇 COMMODITÉS":   ["XAU/USD"],
         "🖥️ ACTIONS":      ["NVDA"],
     }
 
@@ -318,7 +318,7 @@ def build_deep_report(
 
     # ── 6. Summary bias table
     lines += ["🎯 <b>6. BIAIS DIRECTIONNEL</b>", "─" * 28]
-    for name in ["EUR/USD", "USD/CAD", "GBP/USD", "USD/JPY", "NAS100", "US500", "NVDA"]:
+    for name in ["NAS100", "US500", "XAU/USD", "NVDA"]:
         d = assets_data.get(name, {})
         a = analyze_asset(name, d)
         if a.get("error"):

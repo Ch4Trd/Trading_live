@@ -325,9 +325,9 @@ def calc_confluence(
 # ── Formatage HTML ────────────────────────────────────────────────────────────
 
 GROUPS = [
-    ("💱 FOREX",    ["EUR/USD", "USD/CAD", "GBP/USD", "USD/JPY"]),
-    ("📈 INDICES",  ["NAS100", "US500"]),
-    ("🖥️ ACTIONS", ["NVDA"]),
+    ("📈 INDICES",   ["NAS100", "US500"]),
+    ("🥇 COMMODITÉS", ["XAU/USD"]),
+    ("🖥️ ACTIONS",  ["NVDA"]),
 ]
 
 

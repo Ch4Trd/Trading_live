@@ -14,8 +14,8 @@ log = logging.getLogger(__name__)
 
 HEADERS      = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 IMPACT_EMOJI = {"High": "🔴", "Medium": "🟡", "Low": "⚪", "Holiday": "🏦"}
-TARGET       = {"USD", "CAD", "EUR", "GBP"}
-FLAG_MAP     = {"USD": "🇺🇸", "CAD": "🇨🇦", "EUR": "🇪🇺", "GBP": "🇬🇧"}
+TARGET       = {"USD"}
+FLAG_MAP     = {"USD": "🇺🇸"}
 
 
 @dataclass
@@ -140,7 +140,7 @@ def format_day_message(events: list) -> str:
 
 def format_week_message(events: list) -> str:
     if not events:
-        return "<i>Aucun événement USD/CAD cette semaine.</i>"
+        return "<i>Aucun événement USD cette semaine.</i>"
 
     by_day: dict = {}
     for e in events:

@@ -1188,9 +1188,9 @@ async def cmd_yield_curve(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> Non
 
 ASK_TEXTS = {
     "usage": {
-        "fr": "❓ Pose une question : <code>/ask Que pense tu de l'EUR/USD aujourd'hui ?</code>",
-        "en": "❓ Ask a question: <code>/ask What do you think about EUR/USD today?</code>",
-        "es": "❓ Haz una pregunta: <code>/ask ¿Qué piensas sobre el EUR/USD hoy?</code>",
+        "fr": "❓ Pose une question : <code>/ask Que pense tu du NAS100 aujourd'hui ?</code>",
+        "en": "❓ Ask a question: <code>/ask What do you think about NAS100 today?</code>",
+        "es": "❓ Haz una pregunta: <code>/ask ¿Qué piensas sobre el NAS100 hoy?</code>",
     },
     "loading": {
         "fr": "🤔 Analyse en cours…",
@@ -1260,7 +1260,7 @@ async def _button_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> No
                                          text=t("loading_price", lang), **SEND_KW)
         assets = await loop.run_in_executor(None, fetch_all_assets)
         await msg.delete()
-        _PRICE_BTN_SYMBOLS = ["XAU/USD", "NAS100", "US500", "GBP/USD", "EUR/USD"]
+        _PRICE_BTN_SYMBOLS = ["NAS100", "US500", "XAU/USD", "NVDA"]
         for part in fmt.build_price_message(assets, symbols=_PRICE_BTN_SYMBOLS):
             await ctx.bot.send_message(chat_id=chat_id, text=part, **SEND_KW)
 
@@ -1296,10 +1296,10 @@ async def _button_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> No
 
 _SESSION_SCHEDULE = [
     # (open_utc, close_utc, name, flag, pairs, color)
-    (21,  6,  "Sydney",   "🇦🇺", "AUD/USD  NZD/USD  USD/JPY",  "🟡"),
-    (23,  8,  "Tokyo",    "🇯🇵", "USD/JPY  AUD/JPY  EUR/JPY",  "🟠"),
-    ( 7, 16,  "Londres",  "🇬🇧", "EUR/USD  GBP/USD  EUR/GBP",  "🔵"),
-    (12, 21,  "New York", "🇺🇸", "USD/CAD  EUR/USD  GBP/USD",  "🔴"),
+    (21,  6,  "Sydney",   "🇦🇺", "Pré-marché Asia / faible liquidité",        "🟡"),
+    (23,  8,  "Tokyo",    "🇯🇵", "Faible liquidité — NQ/ES consolidation",    "🟠"),
+    ( 7, 16,  "Londres",  "🇬🇧", "Volatilité macro — attention NFP/CPI",      "🔵"),
+    (12, 21,  "New York", "🇺🇸", "NAS100 / US500 — séance principale",        "🔴"),
 ]
 
 def _is_session_open(open_h: int, close_h: int, hour: int) -> bool:
@@ -1384,7 +1384,7 @@ async def cmd_session(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
         lines.append("<i>Bon moment pour analyser, pas pour trader.</i>")
     elif "New York" in active_set and "Londres" in active_set:
         lines.append("🎯 <b>Meilleure fenêtre de la journée</b> — liquidité et volatilité max.")
-        lines.append("EUR/USD GBP/USD USD/CAD : setups les plus fiables.")
+        lines.append("NAS100 / US500 : volatilité et liquidité maximales — meilleure fenêtre.")
     elif "Londres" in active_set:
         lines.append("📈 Session Londres — EUR et GBP en mouvement, volume solide.")
     elif "New York" in active_set:

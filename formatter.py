@@ -57,7 +57,7 @@ def build_us_report(articles: list, limit: int = 10) -> list:
 
 # ── market data ───────────────────────────────────────────────────────────────
 
-_DEFAULT_SYMBOLS = ["EUR/USD", "USD/CAD", "GBP/USD", "USD/JPY", "XAU/USD", "NAS100", "US500", "NVDA"]
+_DEFAULT_SYMBOLS = ["NAS100", "US500", "XAU/USD", "NVDA"]
 
 
 def build_price_message(assets_data: dict, symbols: list = None) -> list:

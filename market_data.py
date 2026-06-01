@@ -128,8 +128,6 @@ def get_history_df(days: int = 30) -> pd.DataFrame:
 
 def format_price(val: float, name: str) -> str:
     t = ASSET_TYPE.get(name, "stock")
-    if t == "forex":
-        return f"{val:.4f}" if val < 100 else f"{val:.2f}"
     if t == "commodity":
         return f"{val:,.2f}"
     return f"{val:,.2f}"
