@@ -138,6 +138,22 @@ TZ_ALIASES: dict[str, str] = {
     "CST8": "Asia/Shanghai",
     "AEST": "Australia/Sydney",
     "AEDT": "Australia/Sydney",
+    # Offsets fixes UTC±N
+    "UTC-5": "Etc/GMT+5",   # New York hiver / Chicago été
+    "UTC-4": "Etc/GMT+4",   # New York été / Halifax hiver
+    "UTC-3": "Etc/GMT+3",   # Buenos Aires / Brasilia
+    "UTC-6": "Etc/GMT+6",   # Chicago hiver / Mexico
+    "UTC-7": "Etc/GMT+7",   # Denver hiver
+    "UTC-8": "Etc/GMT+8",   # Los Angeles hiver
+    "UTC+0": "UTC",
+    "UTC+1": "Etc/GMT-1",   # Paris hiver / Londres été
+    "UTC+2": "Etc/GMT-2",   # Paris été / Helsinki hiver
+    "UTC+3": "Etc/GMT-3",   # Moscou / Istanbul
+    "UTC+5": "Etc/GMT-5",   # Karachi
+    "UTC+5:30": "Asia/Kolkata",
+    "UTC+8": "Etc/GMT-8",   # Shanghai / Singapour
+    "UTC+9": "Etc/GMT-9",   # Tokyo
+    "UTC+10": "Etc/GMT-10", # Sydney hiver
 }
 
 
@@ -793,23 +809,51 @@ TZ_TEXTS = {
         "fr": "🌍 Fuseau horaire défini : <b>{tz}</b>\nToutes tes alertes afficheront l'heure en <b>{tz}</b>.",
         "en": "🌍 Timezone set to <b>{tz}</b>\nAll your alerts will show time in <b>{tz}</b>.",
         "es": "🌍 Zona horaria configurada: <b>{tz}</b>\nTodas tus alertas mostrarán la hora en <b>{tz}</b>.",
+        "ar": "🌍 تم ضبط المنطقة الزمنية: <b>{tz}</b>\nستظهر جميع تنبيهاتك بالتوقيت <b>{tz}</b>.",
     },
     "invalid": {
-        "fr": "❌ Fuseau invalide : <code>{tz}</code>\nExemples : <code>America/Toronto</code>  <code>Europe/Paris</code>  <code>UTC</code>  <code>ET</code>  <code>CET</code>",
-        "en": "❌ Invalid timezone: <code>{tz}</code>\nExamples: <code>America/Toronto</code>  <code>Europe/Paris</code>  <code>UTC</code>  <code>ET</code>  <code>CET</code>",
-        "es": "❌ Zona horaria inválida: <code>{tz}</code>\nEjemplos: <code>America/Toronto</code>  <code>Europe/Paris</code>  <code>UTC</code>  <code>ET</code>  <code>CET</code>",
+        "fr": "❌ Fuseau invalide : <code>{tz}</code>\nExemples : <code>UTC-5</code>  <code>UTC-4</code>  <code>ET</code>  <code>CET</code>  <code>America/Toronto</code>",
+        "en": "❌ Invalid timezone: <code>{tz}</code>\nExamples: <code>UTC-5</code>  <code>UTC-4</code>  <code>ET</code>  <code>CET</code>  <code>America/Toronto</code>",
+        "es": "❌ Zona horaria inválida: <code>{tz}</code>\nEjemplos: <code>UTC-5</code>  <code>UTC-4</code>  <code>ET</code>  <code>CET</code>  <code>America/Toronto</code>",
+        "ar": "❌ منطقة زمنية غير صالحة: <code>{tz}</code>\nأمثلة: <code>UTC-5</code>  <code>UTC-4</code>  <code>ET</code>  <code>America/Toronto</code>",
     },
     "status": {
-        "fr": "🌍 Fuseau actuel : <b>{tz}</b>  |  Heure : <code>{now}</code>\nChange avec /tz &lt;fuseau&gt;  ex: /tz America/Toronto",
-        "en": "🌍 Current timezone: <b>{tz}</b>  |  Time: <code>{now}</code>\nChange with /tz &lt;timezone&gt;  ex: /tz America/Toronto",
-        "es": "🌍 Zona horaria actual: <b>{tz}</b>  |  Hora: <code>{now}</code>\nCambia con /tz &lt;zona&gt;  ej: /tz America/Toronto",
+        "fr": "🌍 Fuseau actuel : <b>{tz}</b>  |  Heure : <code>{now}</code>\nChange avec /tz &lt;fuseau&gt; ou choisis ci-dessous :",
+        "en": "🌍 Current timezone: <b>{tz}</b>  |  Time: <code>{now}</code>\nChange with /tz &lt;timezone&gt; or pick below:",
+        "es": "🌍 Zona horaria actual: <b>{tz}</b>  |  Hora: <code>{now}</code>\nCambia con /tz &lt;zona&gt; o elige abajo:",
+        "ar": "🌍 المنطقة الزمنية الحالية: <b>{tz}</b>  |  الوقت: <code>{now}</code>\nغيّر بـ /tz &lt;منطقة&gt; أو اختر من الأزرار:",
     },
     "usage": {
-        "fr": "❓ Usage : /tz &lt;fuseau&gt;\nExemples : <code>America/Toronto</code>  <code>Europe/Paris</code>  <code>ET</code>  <code>CET</code>  <code>UTC</code>",
-        "en": "❓ Usage: /tz &lt;timezone&gt;\nExamples: <code>America/Toronto</code>  <code>Europe/Paris</code>  <code>ET</code>  <code>CET</code>  <code>UTC</code>",
-        "es": "❓ Uso: /tz &lt;zona&gt;\nEjemplos: <code>America/Toronto</code>  <code>Europe/Paris</code>  <code>ET</code>  <code>CET</code>  <code>UTC</code>",
+        "fr": "❓ Usage : /tz &lt;fuseau&gt;\nExemples : <code>UTC-5</code>  <code>UTC-4</code>  <code>ET</code>  <code>CET</code>  <code>America/Toronto</code>",
+        "en": "❓ Usage: /tz &lt;timezone&gt;\nExamples: <code>UTC-5</code>  <code>UTC-4</code>  <code>ET</code>  <code>CET</code>  <code>America/Toronto</code>",
+        "es": "❓ Uso: /tz &lt;zona&gt;\nEjemplos: <code>UTC-5</code>  <code>UTC-4</code>  <code>ET</code>  <code>CET</code>  <code>America/Toronto</code>",
+        "ar": "❓ الاستخدام: /tz &lt;منطقة&gt;\nأمثلة: <code>UTC-5</code>  <code>UTC-4</code>  <code>ET</code>  <code>America/Toronto</code>",
     },
 }
+
+# Clavier inline pour choisir rapidement un fuseau
+_TZ_KEYBOARD = InlineKeyboardMarkup([
+    [
+        InlineKeyboardButton("🇺🇸 UTC-5 (EST)",    callback_data="tz_set:Etc/GMT+5"),
+        InlineKeyboardButton("🇨🇦 UTC-4 (EDT/AST)", callback_data="tz_set:Etc/GMT+4"),
+        InlineKeyboardButton("🌍 UTC",               callback_data="tz_set:UTC"),
+    ],
+    [
+        InlineKeyboardButton("🗽 ET (New York)",     callback_data="tz_set:America/New_York"),
+        InlineKeyboardButton("🏔️ MT (Denver)",      callback_data="tz_set:America/Denver"),
+        InlineKeyboardButton("🌊 PT (L.A.)",         callback_data="tz_set:America/Los_Angeles"),
+    ],
+    [
+        InlineKeyboardButton("🗼 CET (Paris)",       callback_data="tz_set:Europe/Paris"),
+        InlineKeyboardButton("🇬🇧 GMT (Londres)",   callback_data="tz_set:Europe/London"),
+        InlineKeyboardButton("🇷🇺 MSK (Moscou)",    callback_data="tz_set:Europe/Moscow"),
+    ],
+    [
+        InlineKeyboardButton("🇯🇵 JST (Tokyo)",     callback_data="tz_set:Asia/Tokyo"),
+        InlineKeyboardButton("🇮🇳 IST (Inde)",      callback_data="tz_set:Asia/Kolkata"),
+        InlineKeyboardButton("🇦🇺 AEST (Sydney)",   callback_data="tz_set:Australia/Sydney"),
+    ],
+])
 
 
 async def cmd_tz(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
@@ -831,13 +875,15 @@ async def cmd_tz(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
         except Exception:
             now_str = "?"
         await update.message.reply_text(
-            TZ_TEXTS["status"][lang].format(tz=current, now=now_str), **SEND_KW
+            TZ_TEXTS["status"][lang].format(tz=current, now=now_str),
+            reply_markup=_TZ_KEYBOARD,
+            **SEND_KW,
         )
         return
 
     raw = ctx.args[0].strip()
-    # Résout l'alias si connu
-    iana = TZ_ALIASES.get(raw.upper(), raw)
+    # Résout l'alias si connu (insensible à la casse, sauf UTC±N)
+    iana = TZ_ALIASES.get(raw.upper(), TZ_ALIASES.get(raw, raw))
 
     # Valide le nom IANA
     try:
@@ -1290,6 +1336,23 @@ async def _button_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> No
         vix    = await loop.run_in_executor(None, fetch_vix)
         await msg.delete()
         await _send(format_vix_message(vix))
+
+    elif data.startswith("tz_set:"):
+        from zoneinfo import ZoneInfo
+        iana = data.split(":", 1)[1]
+        try:
+            ZoneInfo(iana)  # validation
+            timezones[str(chat_id)] = iana
+            _save_json(TZ_FILE, timezones)
+            from datetime import datetime, timezone as _tz
+            now_str = datetime.now(_tz.utc).astimezone(ZoneInfo(iana)).strftime("%H:%M %Z")
+            label   = TZ_TEXTS["set"].get(lang, TZ_TEXTS["set"]["fr"]).format(tz=iana)
+            await query.edit_message_text(
+                f"{label}\n🕒 Heure actuelle : <code>{now_str}</code>",
+                **SEND_KW,
+            )
+        except Exception:
+            await query.answer("❌ Erreur fuseau horaire.", show_alert=True)
 
 
 # ── /session ──────────────────────────────────────────────────────────────────
