@@ -554,7 +554,7 @@ async def cmd_deep(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
             f_assets = pool.submit(fetch_all_assets)
             f_df     = pool.submit(get_history_df, 30)
-            f_cal    = pool.submit(get_month_events, True)
+            f_cal    = pool.submit(get_month_events)
             f_us     = pool.submit(fetch_us)
             f_vix    = pool.submit(fetch_vix)
             f_yield  = pool.submit(fetch_yield_curve)

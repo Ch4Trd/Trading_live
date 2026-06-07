@@ -1,6 +1,6 @@
 """
 economic_calendar.py – Calendrier économique gratuit via ForexFactory XML.
-Filtre USD et CAD uniquement. Aucune clé API requise.
+Aucun filtre de devise ni d'impact — tous les événements sont affichés.
 """
 
 import logging
@@ -14,8 +14,13 @@ log = logging.getLogger(__name__)
 
 HEADERS      = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 IMPACT_EMOJI = {"High": "🔴", "Medium": "🟡", "Low": "⚪", "Holiday": "🏦"}
-TARGET       = {"USD"}
-FLAG_MAP     = {"USD": "🇺🇸"}
+
+FLAG_MAP = {
+    "USD": "🇺🇸", "EUR": "🇪🇺", "GBP": "🇬🇧", "JPY": "🇯🇵",
+    "CAD": "🇨🇦", "AUD": "🇦🇺", "NZD": "🇳🇿", "CHF": "🇨🇭",
+    "CNY": "🇨🇳", "CNH": "🇨🇳", "MXN": "🇲🇽", "BRL": "🇧🇷",
+    "INR": "🇮🇳", "KRW": "🇰🇷", "SGD": "🇸🇬", "HKD": "🇭🇰",
+}
 
 
 @dataclass
@@ -38,7 +43,8 @@ def _tag(item, name: str) -> str:
     return el.text.strip() if el is not None and el.text else ""
 
 
-def _parse(url: str, high_only: bool = False) -> list:
+def _parse(url: str) -> list:
+    """Parse le flux ForexFactory XML sans aucun filtre de devise ou d'impact."""
     try:
         resp = requests.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
@@ -50,11 +56,7 @@ def _parse(url: str, high_only: bool = False) -> list:
     events = []
     for item in root.findall(".//event"):
         currency = _tag(item, "country")
-        if currency not in TARGET:
-            continue
-        impact = _tag(item, "impact")
-        if high_only and impact not in ("High", "Medium"):
-            continue
+        impact   = _tag(item, "impact")
 
         date_str = _tag(item, "date")
         try:
@@ -87,25 +89,22 @@ def _parse(url: str, high_only: bool = False) -> list:
     return events
 
 
-def get_week_events()                -> list: return _parse(FF_WEEK_URL)
-def get_month_events(high_only=True) -> list: return _parse(FF_MONTH_URL, high_only)
+def get_week_events()  -> list: return _parse(FF_WEEK_URL)
+def get_month_events() -> list: return _parse(FF_MONTH_URL)
 
 
 def get_day_events() -> list:
-    """Événements du jour courant — exclut Low (1 étoile) et Holiday."""
+    """Tous les événements du jour courant, sans filtre d'impact ni de devise."""
     today  = datetime.now(timezone.utc).date()
     events = _parse(FF_WEEK_URL)
-    return [
-        e for e in events
-        if e.date.date() == today and e.impact in ("High", "Medium")
-    ]
+    return [e for e in events if e.date.date() == today]
 
 
 def format_day_message(events: list) -> str:
     now = datetime.now(timezone.utc)
 
     if not events:
-        return "<i>Aucun événement High/Medium aujourd'hui.</i>"
+        return "<i>Aucun événement économique aujourd'hui.</i>"
 
     lines = []
     for e in events:
@@ -140,7 +139,7 @@ def format_day_message(events: list) -> str:
 
 def format_week_message(events: list) -> str:
     if not events:
-        return "<i>Aucun événement USD cette semaine.</i>"
+        return "<i>Aucun événement économique cette semaine.</i>"
 
     by_day: dict = {}
     for e in events:

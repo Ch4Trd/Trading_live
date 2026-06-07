@@ -2,7 +2,7 @@
 result_command.py
 /result — Résultats des événements économiques du jour avec analyse des surprises.
 
-Pour chaque événement passé (High + Medium) :
+Tous les événements passés (sans filtre d'impact ni de devise) :
   • Actual vs Forecast vs Previous
   • Analyse de surprise : HAUSSIÈRE 🟢 / BAISSIÈRE 🔴 / CONFORME ➖
   • Impact estimé sur la devise concernée
@@ -33,7 +33,7 @@ _CURRENCY_ASSETS = {
 
 _FLAG_MAP  = {"USD": "🇺🇸", "CAD": "🇨🇦", "EUR": "🇪🇺", "GBP": "🇬🇧",
               "JPY": "🇯🇵", "AUD": "🇦🇺", "NZD": "🇳🇿", "CHF": "🇨🇭"}
-_IMPACT_EMOJI = {"High": "🔴", "Medium": "🟡", "Low": "⚪"}
+_IMPACT_EMOJI = {"High": "🔴", "Medium": "🟡", "Low": "⚪", "Holiday": "🏦"}
 
 
 # ── Parsing numérique ─────────────────────────────────────────────────────────
