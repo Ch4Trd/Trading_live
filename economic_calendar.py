@@ -1,6 +1,6 @@
 """
 economic_calendar.py – Calendrier économique gratuit via ForexFactory XML.
-Aucun filtre de devise ni d'impact — tous les événements sont affichés.
+Filtre USD uniquement. Aucun filtre d'impact — tous les niveaux affichés.
 """
 
 import logging
@@ -14,13 +14,8 @@ log = logging.getLogger(__name__)
 
 HEADERS      = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 IMPACT_EMOJI = {"High": "🔴", "Medium": "🟡", "Low": "⚪", "Holiday": "🏦"}
-
-FLAG_MAP = {
-    "USD": "🇺🇸", "EUR": "🇪🇺", "GBP": "🇬🇧", "JPY": "🇯🇵",
-    "CAD": "🇨🇦", "AUD": "🇦🇺", "NZD": "🇳🇿", "CHF": "🇨🇭",
-    "CNY": "🇨🇳", "CNH": "🇨🇳", "MXN": "🇲🇽", "BRL": "🇧🇷",
-    "INR": "🇮🇳", "KRW": "🇰🇷", "SGD": "🇸🇬", "HKD": "🇭🇰",
-}
+TARGET       = {"USD"}
+FLAG_MAP     = {"USD": "🇺🇸"}
 
 
 @dataclass
@@ -44,7 +39,7 @@ def _tag(item, name: str) -> str:
 
 
 def _parse(url: str) -> list:
-    """Parse le flux ForexFactory XML sans aucun filtre de devise ou d'impact."""
+    """Parse le flux ForexFactory XML — filtre USD uniquement, tous impacts."""
     try:
         resp = requests.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
@@ -56,7 +51,9 @@ def _parse(url: str) -> list:
     events = []
     for item in root.findall(".//event"):
         currency = _tag(item, "country")
-        impact   = _tag(item, "impact")
+        if currency not in TARGET:
+            continue
+        impact = _tag(item, "impact")
 
         date_str = _tag(item, "date")
         try:
@@ -104,7 +101,7 @@ def format_day_message(events: list) -> str:
     now = datetime.now(timezone.utc)
 
     if not events:
-        return "<i>Aucun événement économique aujourd'hui.</i>"
+        return "<i>Aucun événement USD aujourd'hui.</i>"
 
     lines = []
     for e in events:
@@ -139,7 +136,7 @@ def format_day_message(events: list) -> str:
 
 def format_week_message(events: list) -> str:
     if not events:
-        return "<i>Aucun événement économique cette semaine.</i>"
+        return "<i>Aucun événement USD cette semaine.</i>"
 
     by_day: dict = {}
     for e in events:
