@@ -28,8 +28,8 @@ log = logging.getLogger(__name__)
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 
-POLL_INTERVAL      = 15      # secondes (mode normal)
-TURBO_INTERVAL     = 5       # secondes (event dans <3 min)
+POLL_INTERVAL      = 60      # secondes (mode normal) — réduit de 15→60s pour éviter les 429 FF
+TURBO_INTERVAL     = 30      # secondes (event dans <3 min) — réduit de 5→30s
 LOOKAHEAD_HOURS    = 12      # surveiller events dans les 12h
 FIRED_TTL_HOURS    = 6       # oublier les events déclenchés après 6h
 MAX_HISTORY        = 12      # garder les 12 dernières releases par event
@@ -409,19 +409,49 @@ class MacroEngine:
         # uid → event_time (pour le calcul turbo)
         self._event_times: dict[str, datetime] = {}
         self.history = MacroHistory()
+        # Cache local : {url: (fetched_at, root_element)}
+        self._xml_cache: dict[str, tuple[datetime, object]] = {}
+        self._xml_ban:   dict[str, datetime]                = {}
+        self._XML_TTL = timedelta(seconds=55)  # légèrement sous POLL_INTERVAL
+
+    # ── Cache XML ─────────────────────────────────────────────────────────────
+
+    def _get_xml(self, url: str):
+        """Retourne l'élément XML racine avec cache 55s + gestion ban 429."""
+        now = datetime.now(timezone.utc)
+        if url in self._xml_ban and now < self._xml_ban[url]:
+            return self._xml_cache.get(url, (None, None))[1]
+        if url in self._xml_cache:
+            fetched_at, root = self._xml_cache[url]
+            if now - fetched_at < self._XML_TTL:
+                return root
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=10)
+            resp.raise_for_status()
+            root = ET.fromstring(resp.content)
+            self._xml_cache[url] = (now, root)
+            self._xml_ban.pop(url, None)
+            return root
+        except requests.HTTPError as exc:
+            if hasattr(exc, 'response') and exc.response is not None and exc.response.status_code == 429:
+                retry = int(exc.response.headers.get("retry-after", 300))
+                self._xml_ban[url] = now + timedelta(seconds=retry)
+                log.warning("macro_engine 429 — ban %ds pour %s", retry, url)
+            else:
+                log.debug("macro_engine fetch [%s]: %s", url, exc)
+            return self._xml_cache.get(url, (None, None))[1]
+        except Exception as exc:
+            log.debug("macro_engine fetch [%s]: %s", url, exc)
+            return self._xml_cache.get(url, (None, None))[1]
 
     # ── Fetch + parse FF XML ──────────────────────────────────────────────────
 
     def _fetch_events(self) -> list[dict]:
-        """Récupère et parse les events HIGH du calendrier FF."""
+        """Récupère et parse les events HIGH du calendrier FF avec cache 55s."""
         events = []
         for url in (FF_WEEK_URL, FF_MONTH_URL):
-            try:
-                resp = requests.get(url, headers=HEADERS, timeout=10)
-                resp.raise_for_status()
-                root = ET.fromstring(resp.content)
-            except Exception as exc:
-                log.debug("macro_engine fetch [%s]: %s", url, exc)
+            root = self._get_xml(url)
+            if root is None:
                 continue
 
             for item in root.findall(".//event"):
