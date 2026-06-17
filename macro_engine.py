@@ -34,9 +34,15 @@ LOOKAHEAD_HOURS    = 12      # surveiller events dans les 12h
 FIRED_TTL_HOURS    = 6       # oublier les events déclenchés après 6h
 MAX_HISTORY        = 12      # garder les 12 dernières releases par event
 HISTORY_FILE       = Path(__file__).parent / "macro_history.json"
-FF_WEEK_URL        = "https://nfs.faireconomy.media/ff_calendar_thisweek.xml"
-FF_MONTH_URL       = "https://nfs.faireconomy.media/ff_calendar_thismonth.xml"
-HEADERS            = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+FF_WEEK_URL        = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+FF_MONTH_URL       = "https://nfs.faireconomy.media/ff_calendar_thismonth.json"
+HEADERS            = {
+    "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                   "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"),
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://www.forexfactory.com/",
+}
 
 # ── Catalogue des events HIGH à surveiller ────────────────────────────────────
 # Clé : substring lowercase à matcher dans le titre FF
@@ -409,98 +415,39 @@ class MacroEngine:
         # uid → event_time (pour le calcul turbo)
         self._event_times: dict[str, datetime] = {}
         self.history = MacroHistory()
-        # Cache local : {url: (fetched_at, root_element)}
-        self._xml_cache: dict[str, tuple[datetime, object]] = {}
-        self._xml_ban:   dict[str, datetime]                = {}
-        self._XML_TTL = timedelta(seconds=55)  # légèrement sous POLL_INTERVAL
 
-    # ── Cache XML ─────────────────────────────────────────────────────────────
-
-    def _get_xml(self, url: str):
-        """Retourne l'élément XML racine avec cache 55s + gestion ban 429."""
-        now = datetime.now(timezone.utc)
-        if url in self._xml_ban and now < self._xml_ban[url]:
-            return self._xml_cache.get(url, (None, None))[1]
-        if url in self._xml_cache:
-            fetched_at, root = self._xml_cache[url]
-            if now - fetched_at < self._XML_TTL:
-                return root
-        try:
-            resp = requests.get(url, headers=HEADERS, timeout=10)
-            resp.raise_for_status()
-            root = ET.fromstring(resp.content)
-            self._xml_cache[url] = (now, root)
-            self._xml_ban.pop(url, None)
-            return root
-        except requests.HTTPError as exc:
-            if hasattr(exc, 'response') and exc.response is not None and exc.response.status_code == 429:
-                retry = int(exc.response.headers.get("retry-after", 300))
-                self._xml_ban[url] = now + timedelta(seconds=retry)
-                log.warning("macro_engine 429 — ban %ds pour %s", retry, url)
-            else:
-                log.debug("macro_engine fetch [%s]: %s", url, exc)
-            return self._xml_cache.get(url, (None, None))[1]
-        except Exception as exc:
-            log.debug("macro_engine fetch [%s]: %s", url, exc)
-            return self._xml_cache.get(url, (None, None))[1]
-
-    # ── Fetch + parse FF XML ──────────────────────────────────────────────────
+    # ── Fetch + parse via le cache PARTAGÉ d'economic_calendar ─────────────────
 
     def _fetch_events(self) -> list[dict]:
-        """Récupère et parse les events HIGH du calendrier FF avec cache 55s."""
+        """
+        Récupère les events HIGH USD/EUR/GBP/CAD du catalogue macro.
+        Réutilise le cache partagé d'economic_calendar (1 seule requête FF /10min
+        pour le bot entier → évite les 429 Cloudflare).
+        """
+        from economic_calendar import get_week_raw
+
         events = []
-        for url in (FF_WEEK_URL, FF_MONTH_URL):
-            root = self._get_xml(url)
-            if root is None:
+        for e in get_week_raw():
+            if e.impact != "High":
+                continue
+            if e.currency not in ("USD", "EUR", "GBP", "CAD"):
                 continue
 
-            for item in root.findall(".//event"):
+            match = _match_catalog(e.title)
+            if not match:
+                continue
 
-                def _t(name: str) -> str:
-                    el = item.find(name)
-                    return el.text.strip() if el is not None and el.text else ""
-
-                currency = _t("country")
-                impact   = _t("impact")
-                if impact != "High":
-                    continue
-                if currency not in ("USD", "EUR", "GBP", "CAD"):
-                    continue
-
-                title = _t("title")
-                match = _match_catalog(title)
-                if not match:
-                    continue
-
-                date_str  = _t("date")
-                time_str  = _t("time")
-                actual    = _t("actual")
-                forecast  = _t("forecast")
-                previous  = _t("previous")
-
-                try:
-                    date_obj = datetime.strptime(date_str, "%m-%d-%Y").replace(tzinfo=timezone.utc)
-                except Exception:
-                    continue
-
-                if time_str and time_str.lower() not in ("all day", "tentative", ""):
-                    try:
-                        t = datetime.strptime(time_str.upper(), "%I:%M%p")
-                        date_obj = date_obj.replace(hour=t.hour, minute=t.minute)
-                    except Exception:
-                        pass
-
-                events.append({
-                    "uid":      _event_uid(title, date_str),
-                    "title":    title,
-                    "currency": currency,
-                    "date":     date_obj,
-                    "actual":   actual,
-                    "forecast": forecast,
-                    "previous": previous,
-                    "catalog":  match[1],
-                })
-            break  # semaine courante suffit en priorité
+            date_iso = e.date.isoformat()
+            events.append({
+                "uid":      _event_uid(e.title, date_iso),
+                "title":    e.title,
+                "currency": e.currency,
+                "date":     e.date,
+                "actual":   e.actual,
+                "forecast": e.forecast,
+                "previous": e.previous,
+                "catalog":  match[1],
+            })
         return events
 
     # ── Nettoyage TTL ─────────────────────────────────────────────────────────

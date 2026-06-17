@@ -28,3 +28,4 @@ context_memory.json
 # OS
 .DS_Store
 Thumbs.db
+.calendar_cache/

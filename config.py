@@ -43,5 +43,9 @@ MAX_ARTICLES_REPORT     = 8
 MAX_ALERT_ARTICLES      = 5
 ALERT_INTERVAL_HOURS    = 4
 REQUEST_TIMEOUT         = 10
-FF_WEEK_URL             = "https://nfs.faireconomy.media/ff_calendar_thisweek.xml"
-FF_MONTH_URL            = "https://nfs.faireconomy.media/ff_calendar_thismonth.xml"
+# Endpoint JSON (le XML est rate-limité agressivement par Cloudflare sur IP datacenter)
+FF_WEEK_URL             = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+FF_MONTH_URL            = "https://nfs.faireconomy.media/ff_calendar_thismonth.json"
+# Anciens endpoints XML conservés en fallback
+FF_WEEK_URL_XML         = "https://nfs.faireconomy.media/ff_calendar_thisweek.xml"
+FF_MONTH_URL_XML        = "https://nfs.faireconomy.media/ff_calendar_thismonth.xml"
