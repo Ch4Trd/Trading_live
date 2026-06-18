@@ -16,6 +16,7 @@ import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from dataclasses import dataclass, asdict
+from html import escape as _esc
 from pathlib import Path
 from config import FF_WEEK_URL, FF_MONTH_URL
 
@@ -243,7 +244,7 @@ def format_day_message(events: list) -> str:
 
         if e.is_past():
             status   = "✅"
-            actual_s = f"  <b>Réel: {e.actual}</b>" if e.actual else "  <i>en attente</i>"
+            actual_s = f"  <b>Réel: {_esc(e.actual)}</b>" if e.actual else "  <i>en attente</i>"
         else:
             delta = e.date - now
             mins  = int(delta.total_seconds() / 60)
@@ -254,11 +255,11 @@ def format_day_message(events: list) -> str:
                 status = f"⏰ dans {h}h{m:02d}"
             actual_s = ""
 
-        fc_s   = f"  Prévu: <code>{e.forecast}</code>" if e.forecast else ""
-        prev_s = f"  Préc: <code>{e.previous}</code>"  if e.previous else ""
+        fc_s   = f"  Prévu: <code>{_esc(e.forecast)}</code>" if e.forecast else ""
+        prev_s = f"  Préc: <code>{_esc(e.previous)}</code>"  if e.previous else ""
 
         lines.append(
-            f"{e.impact_emoji()} {e.flag()} <b>{e.title}</b>  "
+            f"{e.impact_emoji()} {e.flag()} <b>{_esc(e.title)}</b>  "
             f"<code>{time_s}</code>  {status}"
             f"{actual_s}{fc_s}{prev_s}"
         )
@@ -279,11 +280,11 @@ def format_week_message(events: list) -> str:
     for day, evts in by_day.items():
         lines.append(f"\n📅 <b>{day}</b>")
         for e in evts:
-            actual_s = f" → <b>{e.actual}</b>" if e.actual else ""
-            fc_s     = f"  Prévu: {e.forecast}" if e.forecast else ""
-            prev_s   = f"  Préc: {e.previous}" if e.previous else ""
+            actual_s = f" → <b>{_esc(e.actual)}</b>" if e.actual else ""
+            fc_s     = f"  Prévu: {_esc(e.forecast)}" if e.forecast else ""
+            prev_s   = f"  Préc: {_esc(e.previous)}" if e.previous else ""
             lines.append(
-                f"{e.impact_emoji()} {e.flag()} <b>{e.title}</b>"
+                f"{e.impact_emoji()} {e.flag()} <b>{_esc(e.title)}</b>"
                 f"{actual_s}{fc_s}{prev_s}"
             )
     return "\n".join(lines)

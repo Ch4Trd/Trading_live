@@ -1344,8 +1344,7 @@ async def _button_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> No
             ZoneInfo(iana)  # validation
             timezones[str(chat_id)] = iana
             _save_json(TZ_FILE, timezones)
-            from datetime import datetime, timezone as _tz
-            now_str = datetime.now(_tz.utc).astimezone(ZoneInfo(iana)).strftime("%H:%M %Z")
+            now_str = datetime.now(timezone.utc).astimezone(ZoneInfo(iana)).strftime("%H:%M %Z")
             label   = TZ_TEXTS["set"].get(lang, TZ_TEXTS["set"]["fr"]).format(tz=iana)
             await query.edit_message_text(
                 f"{label}\n🕒 Heure actuelle : <code>{now_str}</code>",
