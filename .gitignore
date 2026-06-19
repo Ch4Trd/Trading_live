@@ -15,6 +15,7 @@ venv/
 languages.json
 timezones.json
 context_memory.json
+digest_state.json
 
 # Database (données locales, ne pas versionner)
 *.db

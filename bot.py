@@ -36,6 +36,7 @@ from admin_commands import (
 )
 from analyze_command import cmd_analyze
 from macro_engine import macro_engine
+from daily_digest import cmd_daily, daily_digest_job, digest_subscribers
 from dxy_orderflow import cmd_dxy_orderflow
 from silver_bullet import cmd_silver_bullet
 from purge_scan import cmd_purge_scan
@@ -1527,6 +1528,7 @@ async def post_init(app: Application) -> None:
         BotCommand("purge_scan",     "ICT Liquidity Purge — Asian/Prev session — /purge_scan GOLD"),
         BotCommand("learn",          "Leçon analyse fondamentale — /learn | /learn reset"),
         BotCommand("result",         "Résultats économiques du jour — Actual vs Forecast"),
+        BotCommand("daily",          "Brief auto: events à 07:00 + résultats fin de journée — /daily on|off"),
         BotCommand("structure",   "Market structure: HH/HL/BOS/CHoCH"),
         BotCommand("divergence",  "RSI divergences — bullish/bearish regular & hidden"),
         BotCommand("confluence",  "Confluence score 0-10 — évite les faux signaux"),
@@ -1577,14 +1579,17 @@ async def post_init(app: Application) -> None:
     app.job_queue.run_repeating(
         _market_news_job, interval=MARKET_POLL_INTERVAL, first=20, name="market_monitor",
     )
+    app.job_queue.run_repeating(
+        daily_digest_job, interval=300, first=45, name="daily_digest",
+    )
     # ── MacroEngine : tâche asyncio non-bloquante ─────────────────────────────
     import asyncio as _asyncio
     _asyncio.create_task(
         macro_engine.run(app.bot, breaking_subscribers, market_subscribers)
     )
     log.info(
-        "Bot prêt. alerts:%d | trump:%d | breaking:%d | market:%d | macro_engine:ON",
-        len(subscribers), len(trump_subscribers), len(breaking_subscribers), len(market_subscribers),
+        "Bot prêt. alerts:%d | trump:%d | breaking:%d | market:%d | daily:%d | macro_engine:ON",
+        len(subscribers), len(trump_subscribers), len(breaking_subscribers), len(market_subscribers), len(digest_subscribers),
     )
 
 
@@ -1631,6 +1636,7 @@ def run_bot() -> None:
     app.add_handler(CommandHandler("purge",          cmd_purge_scan))
     app.add_handler(CommandHandler("learn",          cmd_learn))
     app.add_handler(CommandHandler("result",         cmd_result))
+    app.add_handler(CommandHandler("daily",          cmd_daily))
     app.add_handler(CommandHandler("structure",    cmd_structure))
     app.add_handler(CommandHandler("divergence",  cmd_divergence))
     app.add_handler(CommandHandler("confluence",  cmd_confluence))
